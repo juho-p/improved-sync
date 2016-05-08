@@ -1,10 +1,9 @@
 #!/usr/bin/ruby
 
 require 'yaml'
+require 'set'
 
 options = YAML.load(File.read('options.yaml'))
-
-require 'set'
 
 InotifyWait = 'inotifywait -r -m -e close_write -e move -e create -e delete'
 Cleanup = Hash.new { |h,k| h[k] = [] }
@@ -12,8 +11,6 @@ Cleanup = Hash.new { |h,k| h[k] = [] }
 Dir.chdir options[:localdir]
 
 def synchronize(options, changed)
-  puts "DBG: SYN #{changed}"
-
   if changed == :local
     unless`git status -s`.empty?
       `git add .`
@@ -22,9 +19,11 @@ def synchronize(options, changed)
     end
     puts 'sync local -> remote'
     puts `git pull --no-edit`
+    puts 'Start pushing changes to remote...'
     puts `git push`
   elsif changed == :remote
     puts 'sync remote -> local'
+    puts 'Pull changes from remote...'
     puts `git pull --no-edit`
   end
 
@@ -42,7 +41,7 @@ def start_notifier name, queue, cmd
   Thread.start do
     begin
       start = ->() do
-        puts "Start notifier: #{name} -- `#{cmd}`"
+        puts "Start notifier: #{name}"
         p = IO.popen cmd
         Cleanup[name] << p.pid
         p
@@ -53,7 +52,6 @@ def start_notifier name, queue, cmd
       while true
         line = io.gets
         if line.nil?
-          puts 'GETS A'
           io.close
           Cleanup[name].clear
           io = start.call
