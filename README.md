@@ -27,6 +27,9 @@ Usage
 * use init.rb to initialize repo locally (or just use your git skills)
 * use start-sync.sh to start sync (or just run sync.rb)
 
+Now your local files are synchronized with remote repository. You can add other
+systems to use the same remote and the files are kept in sync.
+
 For example:
 
     foo$ ssh remote-server
@@ -48,4 +51,9 @@ there if you don't know how to CLI.
 How it works
 ------------
 
-You have bare git repository at remote machine and git repository at local machine. This program listens both ends and whenever change happens, it uses `git` command line tools to synchronize the files. If something goes wrong, you have to fix everything yourself. If you don't know how to use git.
+You have bare git repository at remote machine and git repository at local
+machine. This program listens both ends and whenever change happens, after some
+delay it uses `git` command line tools to synchronize the files. 
+
+If something goes wrong, you
+have to fix everything yourself. If you don't know how to use git.

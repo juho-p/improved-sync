@@ -1,9 +1,14 @@
 #!/bin/sh
 
+# make sure we run in new pgid
+pid="$$"
+pgid=$(echo `ps -o pgid= "$pid" 2>/dev/null`)
+if [ "$pid" != "$pgid" ]; then
+    exec setsid $0
+fi
+
 daemon()
 {
-    cd `dirname "$0"`
-
     date > log.txt
 
     while [ true ]
@@ -15,7 +20,10 @@ daemon()
     done
 }
 
-echo 'Try to kill old instnace...'
+cd `dirname "$0"`
+
+echo 'Try to kill old instance...'
 ./stop-sync.sh
 daemon &
-ps -o pgid= $! > pgid
+echo 'Started'
+echo $pgid > pgid
