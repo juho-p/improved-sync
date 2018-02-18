@@ -24,3 +24,8 @@ if Dir.entries('.').size == 3 # ., .., .git
   File.write('.gitignore', '')
   puts `git add . && git commit -m 'Initial commit' && git push`
 end
+
+puts ''
+
+puts "please run: crontab -e"
+puts "add rule: */2 * * * * nice -n 19 #{Dir.pwd}/sync.sh #{localdir}"
